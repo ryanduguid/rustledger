@@ -669,8 +669,8 @@ user-login = "Amanieu"
 user-name = "Amanieu d'Antras"
 
 [[publisher.mio]]
-version = "1.2.3"
-when = "2026-09-02"
+version = "1.2.4"
+when = "2026-10-03"
 user-id = 6025
 user-login = "Thomasdezeeuw"
 user-name = "Thomas de Zeeuw"
