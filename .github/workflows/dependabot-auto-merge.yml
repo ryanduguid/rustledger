@@ -7,13 +7,14 @@ name: Dependabot Auto-Merge
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 jobs:
   auto-merge:
+    permissions:
+      contents: write
+      pull-requests: write
     name: Enable auto-merge
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: github.actor == 'dependabot[bot]'
     steps:
       - name: Fetch Dependabot metadata
