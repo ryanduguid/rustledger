@@ -24,7 +24,7 @@ env:
 jobs:
   pr-benchmark:
     name: PR Benchmark
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       # ONE definition. Generation, timing, RSS and the report all read this;
       # stating it per-step let the four drift apart, which is the same defect
@@ -39,6 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           # The base commit is built and measured alongside the PR, so its
           # history has to be here.
           fetch-depth: 0

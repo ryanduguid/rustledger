@@ -20,7 +20,7 @@ permissions:
 jobs:
   update-exemptions:
     name: Update Exemptions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Run for Dependabot PRs and trusted-maintainer PRs (OWNER/MEMBER).
     # Use author_association so we don't have to maintain a username list.
     # Skip when the actor is rustledger-bot itself — that would be this
@@ -50,6 +50,7 @@ jobs:
       - name: Checkout base branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           ref: ${{ github.base_ref }}
           token: ${{ steps.app-token.outputs.token }}
       - name: Fetch PR's Cargo files

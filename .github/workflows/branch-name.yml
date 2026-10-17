@@ -8,7 +8,7 @@ permissions:
 jobs:
   validate:
     name: Validate branch name
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Skip validation for bot PRs (they use their own naming conventions)
     if: github.actor != 'dependabot[bot]' && github.actor != 'github-actions[bot]'
     steps:

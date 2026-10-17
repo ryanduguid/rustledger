@@ -6,6 +6,9 @@
 
 Parse and validate your ledger faster than Python beancount.
 
+The badges below refer to
+[upstream rustledger](https://github.com/rustledger/rustledger).
+
 [![crates.io](https://img.shields.io/crates/v/rustledger)](https://crates.io/crates/rustledger)
 [![npm](https://img.shields.io/npm/v/@rustledger/wasm)](https://www.npmjs.com/package/@rustledger/wasm)
 [![Packaging status](https://repology.org/badge/tiny-repos/rustledger.svg)](https://repology.org/project/rustledger/versions)
