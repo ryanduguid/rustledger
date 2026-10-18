@@ -1,0 +1,32 @@
+{
+  "other": {
+    "total": 730,
+    "check_match": 730,
+    "full_match": 730
+  },
+  "plugins": {
+    "total": 3,
+    "check_match": 3,
+    "full_match": 3
+  },
+  "synthetic-bean-example": {
+    "total": 3,
+    "check_match": 3,
+    "full_match": 3
+  },
+  "synthetic-edge-cases": {
+    "total": 7,
+    "check_match": 7,
+    "full_match": 7
+  },
+  "synthetic-proptest": {
+    "total": 500,
+    "check_match": 500,
+    "full_match": 500
+  },
+  "regressions": {
+    "total": 26,
+    "check_match": 26,
+    "full_match": 26
+  }
+}
