@@ -21,6 +21,8 @@ jobs:
   update-exemptions:
     name: Update Exemptions
     runs-on: ubuntu-24.04
+    # The app belongs to upstream; forks do not have its credentials.
+    # Audit validation runs separately in supply-chain.yml on every repository.
     # Run for Dependabot PRs and trusted-maintainer PRs (OWNER/MEMBER).
     # Use author_association so we don't have to maintain a username list.
     # Skip when the actor is rustledger-bot itself — that would be this
@@ -32,6 +34,7 @@ jobs:
     # which reaches a branch in a fork, so a maintainer's fork PR used to fail
     # partway. Skip it up front instead.
     if: |
+      github.repository == 'rustledger/rustledger' &&
       github.actor != 'rustledger-bot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       (
