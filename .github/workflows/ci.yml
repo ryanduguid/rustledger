@@ -23,7 +23,7 @@ jobs:
   # Detect if code files changed (skip builds on docs-only PRs)
   changes:
     name: Detect changes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       code: ${{ steps.filter.outputs.code }}
       vscode: ${{ steps.filter.outputs.vscode }}
@@ -31,6 +31,8 @@ jobs:
       should_build: ${{ steps.decide.outputs.should_build }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Check for code changes
         id: filter
         uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
@@ -77,33 +79,35 @@ jobs:
           # Always build on push to main, merge queue, or manual dispatch
           if [[ "$EVENT_NAME" != "pull_request" ]]; then
             echo "Non-PR event ($EVENT_NAME) - will build"
-            echo "should_build=true" >> $GITHUB_OUTPUT
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           # Always build on release PRs
           if [[ "$HEAD_REF" == release/* ]]; then
             echo "Release PR detected - will build"
-            echo "should_build=true" >> $GITHUB_OUTPUT
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           # Build if code changed
           if [[ "$CODE_CHANGED" == "true" ]]; then
             echo "Code changes detected - will build"
-            echo "should_build=true" >> $GITHUB_OUTPUT
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
           else
             echo "No code changes - skipping build"
-            echo "should_build=false" >> $GITHUB_OUTPUT
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
           fi
   # Fast format check (only on code changes)
   fmt:
     name: Format
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -115,13 +119,15 @@ jobs:
   # (this is what broke v0.16.0 — rustledger-completion was never added).
   publish-list:
     name: Publish list in sync
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Only runs `cargo metadata` (no compilation), so the workflow-level sccache
     # wrapper isn't needed (and isn't installed in this job).
     env:
       RUSTC_WRAPPER: ""
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -134,13 +140,15 @@ jobs:
   # the list cannot drift again silently.
   downstream-paths:
     name: Downstream paths cover the embedder
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # `cargo metadata` only, like publish-list above: no compilation, so the
     # workflow-level sccache wrapper isn't needed here either.
     env:
       RUSTC_WRAPPER: ""
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -158,9 +166,11 @@ jobs:
     name: Wire-format bindings freshness
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -171,7 +181,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       # Python for the `datamodel-code-generator` invocation that
-      # emits `bindings/types.py` (Phase 3, #1232). ubuntu-latest
+      # emits `bindings/types.py` (Phase 3, #1232). ubuntu-24.04
       # preinstalls `pipx`, so the script's `pipx run` path picks the
       # tool up without an extra `pip install` step. Pinning Python
       # 3.12 (matches `--target-python-version` in the regen script).
@@ -203,9 +213,11 @@ jobs:
     name: Unsafe Invariant
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Verify forbid-unsafe-code invariant
         run: ./scripts/check-unsafe-invariant.sh
 
@@ -217,9 +229,11 @@ jobs:
     name: Sync Primitives
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Forbid std::sync Mutex/RwLock in library code
         run: ./scripts/check-sync-primitives.sh
 
@@ -234,9 +248,11 @@ jobs:
   # only them must still exercise them.
   uri-boundary:
     name: URI Boundary
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Self-test the guard (a ratchet whose regex stopped matching says ok forever)
         run: ./scripts/test-uri-boundary.sh
       - name: "Confine file: URI conversion to the boundary module"
@@ -276,6 +292,8 @@ jobs:
         os: [windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -304,9 +322,11 @@ jobs:
     name: VS Code Extension (Nix)
     needs: [changes]
     if: needs.changes.outputs.vscode_nix == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
         with:
           nix_path: nixpkgs=channel:nixos-unstable
@@ -317,9 +337,11 @@ jobs:
     name: VS Code Extension
     needs: [changes]
     if: needs.changes.outputs.vscode == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: '.nvmrc'
@@ -365,7 +387,7 @@ jobs:
     name: Example Plugins
     needs: [changes]
     if: needs.changes.outputs.code == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       # The workflow-level `RUSTC_WRAPPER: sccache` only works in jobs that
       # install sccache; this one does not, and cargo then dies with
@@ -380,6 +402,8 @@ jobs:
       RUSTC_WRAPPER: ''
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -432,9 +456,11 @@ jobs:
   # file here.
   mcp-server:
     name: MCP Server
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: '.nvmrc'
@@ -488,9 +514,11 @@ jobs:
   # still want to lint the test files against the current policy.
   plugin-test-quality:
     name: Plugin Test Quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Self-test the lint script (catches regressions in the regexes)
         run: ./scripts/test-plugin-test-quality.sh
       - name: Run plugin-test-quality lints
@@ -506,9 +534,11 @@ jobs:
     name: Hot-path Collections
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Forbid std SipHash collections in fxhash-only modules
         run: ./scripts/check-hot-path-collections.sh
 
@@ -539,12 +569,14 @@ jobs:
   # can't red the ratchet for reasons unrelated to a SemVer break.
   semver-plugin-types:
     name: SemVer (plugin-types)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       RUSTC_WRAPPER: ''
       RUSTFLAGS: ''
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Check rustledger-plugin-types public API for SemVer breaks
         uses: obi1kenobi/cargo-semver-checks-action@6b69fcf40e9b5fb17adeb57e4b6ecd020649a239 # v2.9
         with:
@@ -555,7 +587,7 @@ jobs:
     name: ${{ matrix.name }}
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       RUST_MIN_STACK: 8388608
     strategy:
@@ -578,6 +610,8 @@ jobs:
             env: RUSTDOCFLAGS=-Dwarnings
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -609,11 +643,13 @@ jobs:
     name: Doctests
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       RUST_MIN_STACK: 8388608
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -626,9 +662,11 @@ jobs:
     name: Regression Tests
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -640,13 +678,13 @@ jobs:
         run: ./scripts/test-regressions.sh ./target/release/rledger
       - name: Summary
         run: |
-          echo "## Regression Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Tested beancount files from user-reported issues:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Regression Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Tested beancount files from user-reported issues:" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
           for f in tests/regressions/issue-*.beancount; do
             issue=$(basename "$f" .beancount | sed 's/issue-//')
-            echo "- [#$issue](https://github.com/rustledger/rustledger/issues/$issue)" >> $GITHUB_STEP_SUMMARY
+            echo "- [#$issue](https://github.com/rustledger/rustledger/issues/$issue)" >> "$GITHUB_STEP_SUMMARY"
           done
   # Criterion benches must keep COMPILING so they don't bitrot. Nothing else
   # builds them: `bench-pr.yml` runs a separate custom timing benchmark, and
@@ -658,9 +696,11 @@ jobs:
     name: Benchmarks Compile
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -698,9 +738,11 @@ jobs:
     name: Slim Build (no wasmtime)
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -717,9 +759,11 @@ jobs:
     name: Component Parity (wasip2)
     needs: [changes]
     if: needs.changes.outputs.should_build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -752,10 +796,11 @@ jobs:
   # unchanged (comments/whitespace ignored), so non-WIT PRs pass trivially.
   wit-version-gate:
     name: WIT Version Gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: WIT interface change requires a package-version bump
         run: ./scripts/check-wit-version-bump.sh "${{ github.event.pull_request.base.sha }}"
@@ -764,7 +809,7 @@ jobs:
   build:
     name: build
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [changes, fmt, unsafe-invariant, sync-primitives, hot-path-collections, plugin-test-quality, uri-boundary, lsp-platform, mcp-server, vscode-extension, vscode-nix, ci, doctest, regressions, bench-build, bindings-fresh, component-parity, wit-version-gate]
     steps:
       - name: Check results

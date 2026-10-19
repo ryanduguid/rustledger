@@ -470,7 +470,9 @@ impl PythonRuntime {
         // entries while a plugin ran, and after a Ctrl-C, which leaves
         // the directory behind, #2500's third review). Windows' temp
         // directory is per-user already.
-        let mut builder = tempfile::Builder::new();
+        let builder = tempfile::Builder::new();
+        #[cfg(unix)]
+        let mut builder = builder;
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;

@@ -20,7 +20,7 @@ permissions:
 jobs:
   update-exemptions:
     name: Update Exemptions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # The app belongs to upstream; forks do not have its credentials.
     # Audit validation runs separately in supply-chain.yml on every repository.
     # Run for Dependabot PRs and trusted-maintainer PRs (OWNER/MEMBER).
@@ -53,9 +53,9 @@ jobs:
       - name: Checkout base branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           ref: ${{ github.base_ref }}
           token: ${{ steps.app-token.outputs.token }}
-          persist-credentials: false
       - name: Fetch PR's Cargo files
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}

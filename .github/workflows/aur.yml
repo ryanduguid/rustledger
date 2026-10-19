@@ -22,12 +22,14 @@ jobs:
   # Quick check to determine if we should run the full test
   should-run:
     name: Check if AUR test needed
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       run: ${{ steps.decide.outputs.run }}
     steps:
       - name: Checkout for path filtering
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Check for packaging changes
         id: changes
         uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
@@ -46,29 +48,29 @@ jobs:
           # Always run on release PRs
           if [[ "$HEAD_REF" == release/* ]]; then
             echo "Release PR detected - will run AUR test"
-            echo "run=true" >> $GITHUB_OUTPUT
+            echo "run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           # Always run on manual dispatch
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "Manual dispatch - will run AUR test"
-            echo "run=true" >> $GITHUB_OUTPUT
+            echo "run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           # Run if packaging files changed
           if [[ "$PACKAGING_CHANGED" == "true" ]]; then
             echo "Packaging files changed - will run AUR test"
-            echo "run=true" >> $GITHUB_OUTPUT
+            echo "run=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           echo "No AUR-relevant changes - skipping test"
-          echo "run=false" >> $GITHUB_OUTPUT
+          echo "run=false" >> "$GITHUB_OUTPUT"
   test-pkgbuild:
     name: Test PKGBUILD
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: should-run
     if: needs.should-run.outputs.run == 'true' && github.repository == 'rustledger/rustledger'
     env:
@@ -76,6 +78,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Set up sccache
         uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba # v0.0.11
       - name: Cache sccache for Arch container
@@ -100,7 +104,7 @@ jobs:
         id: version
         run: |
           VERSION=$(grep -A5 '^\[workspace\.package\]' Cargo.toml | grep '^version' | head -1 | sed 's/version = "\(.*\)"/\1/')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Version: $VERSION"
       # Create a tarball of the current source for testing
       # This simulates what GitHub would provide for the release
@@ -207,12 +211,12 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "## AUR PKGBUILD Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## AUR PKGBUILD Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
           if [ "${{ job.status }}" = "success" ]; then
-            echo "✅ PKGBUILD builds and installs successfully" >> $GITHUB_STEP_SUMMARY
+            echo "✅ PKGBUILD builds and installs successfully" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "❌ PKGBUILD test failed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Check the logs above for details." >> $GITHUB_STEP_SUMMARY
+            echo "❌ PKGBUILD test failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Check the logs above for details." >> "$GITHUB_STEP_SUMMARY"
           fi

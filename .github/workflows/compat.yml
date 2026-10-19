@@ -48,18 +48,22 @@ concurrency:
   group: compatibility-${{ github.event.pull_request.number || github.event_name }}
   cancel-in-progress: true
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 env:
   CARGO_TERM_COLOR: always
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   compatibility-test:
+    permissions:
+      contents: write
+      pull-requests: write
     name: Run compatibility tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)
@@ -736,7 +740,7 @@ jobs:
                       f.write(r + "\n")
           EOF
       - name: Validate stale-divergence detection logic
-        run: |
+        run: python scripts/compat-bql-test.py --self-test
       # Compare booked VALUES, not just shapes. The comprehensive test above
       # compares `check_match`, `accounts_match`, `posting_count_match` and
       # `error_presence_match` — how MANY postings there are and WHETHER there
@@ -1240,7 +1244,7 @@ jobs:
           BQL_TOTAL: ${{ steps.bql_compat.outputs.bql_total }}
       - name: Update summary
         run: |
-          cat >> $GITHUB_STEP_SUMMARY << EOF
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
           ## Beancount Compatibility Results
 
           ### Summary
@@ -1588,10 +1592,12 @@ jobs:
   #    quietly reintroduce the green-skip.
   python-gated-cargo-tests:
     name: Python-gated cargo tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # stable
         with:
           toolchain: 1.98.1 # pinned stable — bump deliberately, IN LOCKSTEP with rust-toolchain.toml (see #1745, #1750)

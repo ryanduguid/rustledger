@@ -437,7 +437,7 @@ version = "0.97.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.lzma-rust2]]
-version = "0.16.5"
+version = "0.21.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.maybe-owned]]
@@ -949,11 +949,11 @@ version = "0.4.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.zerocopy]]
-version = "0.8.57"
+version = "0.8.63"
 criteria = "safe-to-deploy"
 
 [[exemptions.zerocopy-derive]]
-version = "0.8.57"
+version = "0.8.63"
 criteria = "safe-to-deploy"
 
 [[exemptions.zerofrom]]
@@ -965,7 +965,7 @@ version = "1.9.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.zip]]
-version = "8.6.0"
+version = "9.0.4"
 criteria = "safe-to-deploy"
 
 [[exemptions.zlib-rs]]
@@ -985,5 +985,5 @@ version = "7.3.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.zstd-sys]]
-version = "2.1.0+zstd.1.5.7"
+version = "2.1.2+zstd.1.5.7"
 criteria = "safe-to-deploy"
