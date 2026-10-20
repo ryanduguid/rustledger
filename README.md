@@ -9,16 +9,16 @@ Parse and validate your ledger faster than Python beancount.
 The badges below refer to
 [upstream rustledger](https://github.com/rustledger/rustledger).
 
-[![crates.io](https://img.shields.io/crates/v/rustledger)](https://crates.io/crates/rustledger)
-[![npm](https://img.shields.io/npm/v/@rustledger/wasm)](https://www.npmjs.com/package/@rustledger/wasm)
+[![crates.io](https://img.shields.io/crates/v/rustledger?style=flat&labelColor=000000&color=66023C)](https://crates.io/crates/rustledger)
+[![npm](https://img.shields.io/npm/v/@rustledger/wasm?style=flat&labelColor=000000&color=66023C)](https://www.npmjs.com/package/@rustledger/wasm)
 [![Packaging status](https://repology.org/badge/tiny-repos/rustledger.svg)](https://repology.org/project/rustledger/versions)
-[![docs.rs](https://img.shields.io/docsrs/rustledger-core)](https://docs.rs/rustledger-core)
+[![docs.rs](https://img.shields.io/docsrs/rustledger-core?style=flat&labelColor=000000&color=66023C)](https://docs.rs/rustledger-core)
 
-[![CI](https://github.com/rustledger/rustledger/actions/workflows/ci.yml/badge.svg)](https://github.com/rustledger/rustledger/actions/workflows/ci.yml)
-[![Compatibility](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rustledger/rustledger/compatibility/.github/badges/compat-badge.json)](https://github.com/rustledger/rustledger/actions/workflows/compat.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/rustledger/rustledger/ci.yml?label=CI&style=flat&labelColor=000000)](https://github.com/rustledger/rustledger/actions/workflows/ci.yml)
+[![Compatibility](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rustledger/rustledger/compatibility/.github/badges/compat-badge.json&style=flat&labelColor=000000)](https://github.com/rustledger/rustledger/actions/workflows/compat.yml)
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![Liberapay](https://img.shields.io/liberapay/receives/rustledger.svg?logo=liberapay)](https://liberapay.com/rustledger)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat&labelColor=000000&color=66023C)](LICENSE)
+[![Liberapay](https://img.shields.io/liberapay/receives/rustledger.svg?logo=liberapay&style=flat&labelColor=000000&logoColor=E5E4E2&color=66023C)](https://liberapay.com/rustledger)
 
 </div>
 
@@ -495,4 +495,4 @@ By submitting a pull request, you agree to the [Contributor License Agreement](C
 
 rustledger is free and open source. If you find it useful, consider supporting development:
 
-[![Support on Liberapay](https://img.shields.io/badge/Support%20on-Liberapay-F6C915?logo=liberapay)](https://liberapay.com/rustledger)
+[![Support on Liberapay](https://img.shields.io/badge/Support%20on-Liberapay-F6C915?logo=liberapay&style=flat&labelColor=000000&logoColor=E5E4E2&color=66023C)](https://liberapay.com/rustledger)
