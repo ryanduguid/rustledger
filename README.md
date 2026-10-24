@@ -11,8 +11,8 @@ The badges below refer to
 
 [![crates.io](https://img.shields.io/crates/v/rustledger?style=flat&labelColor=000000&color=66023C)](https://crates.io/crates/rustledger)
 [![npm](https://img.shields.io/npm/v/@rustledger/wasm?style=flat&labelColor=000000&color=66023C)](https://www.npmjs.com/package/@rustledger/wasm)
-[![Packaging status](https://repology.org/badge/tiny-repos/rustledger.svg)](https://repology.org/project/rustledger/versions)
-[![docs.rs](https://img.shields.io/docsrs/rustledger-core?style=flat&labelColor=000000&color=66023C)](https://docs.rs/rustledger-core)
+[![Packaging status](https://img.shields.io/repology/repositories/rustledger?label=in%20repositories&style=flat&labelColor=000000&color=66023C)](https://repology.org/project/rustledger/versions)
+[![docs.rs](https://img.shields.io/docsrs/rustledger-core?style=flat&labelColor=000000)](https://docs.rs/rustledger-core)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/rustledger/rustledger/ci.yml?label=CI&style=flat&labelColor=000000)](https://github.com/rustledger/rustledger/actions/workflows/ci.yml)
 [![Compatibility](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rustledger/rustledger/compatibility/.github/badges/compat-badge.json&style=flat&labelColor=000000)](https://github.com/rustledger/rustledger/actions/workflows/compat.yml)
